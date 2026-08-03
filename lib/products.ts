@@ -1,9 +1,10 @@
+
 export const products = [
   {
     id: 1,
     name: "Ovejita",
     price: 14.95,
-    image: "/products/obejas.jpeg",
+    image: "/products/ovejita.png",
     category: "Decoración",
     featured: true,
   },
@@ -25,10 +26,18 @@ export const products = [
   },
   {
     id: 4,
-    name: "Llavero Sushi",
+    name: "Sushi",
     price: 8.95,
     image: "/products/sushi.png",
     category: "Llaveros",
+    featured: true,
+  },
+  {
+    id: 5,
+    name: "Bambú",
+    price: 10.00,
+    image: "/products/bambu.jpeg",
+    category: "Decoración",
     featured: true,
   },
 ];
