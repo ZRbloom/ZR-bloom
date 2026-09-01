@@ -73,6 +73,7 @@ export async function POST(request: NextRequest) {
     const session = await stripe.checkout.sessions.create({
         mode: "payment",
         payment_method_types: ["card", "bizum"],
+        allow_promotion_codes: true,
         line_items,
         success_url: `${origin}/checkout/success`,
         cancel_url: `${origin}/checkout/cancel`,
