@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useCart } from "@/lib/cart";
+import { FREE_SHIPPING_THRESHOLD } from "@/lib/shipping";
 
 export default function Header() {
     const items = useCart((state) => state.items);
@@ -23,6 +24,10 @@ export default function Header() {
 
     return (
         <header className="w-full bg-[#FCFAFF] border-b border-[#EADCF8] relative">
+            <div className="bg-[#A7A6FF] text-white text-sm text-center py-2 px-4 font-medium">
+                🚚 Envío gratis a partir de {FREE_SHIPPING_THRESHOLD.toFixed(0)} € en pedidos nacionales
+            </div>
+
             <div className="max-w-7xl mx-auto flex items-center justify-between px-6 py-5">
                 <button
                     onClick={() => {

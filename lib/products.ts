@@ -40,6 +40,42 @@ export type Product = {
 
 export type SelectedPersonalization = Record<string, string>;
 
+export const LOW_STOCK_THRESHOLD = 5;
+
+export function getStockInfo(product: Product): {
+  label: string;
+  low: boolean;
+  outOfStock: boolean;
+} {
+  if (product.stock.mode === "stock") {
+    const { quantity } = product.stock;
+
+    if (quantity <= 0) {
+      return { label: "Sin stock", low: false, outOfStock: true };
+    }
+
+    if (quantity <= LOW_STOCK_THRESHOLD) {
+      return {
+        label: `¡Solo quedan ${quantity}!`,
+        low: true,
+        outOfStock: false,
+      };
+    }
+
+    return {
+      label: `${quantity} disponibles`,
+      low: false,
+      outOfStock: false,
+    };
+  }
+
+  return {
+    label: `Fabricación bajo pedido · ${product.stock.productionDays} días aprox.`,
+    low: false,
+    outOfStock: false,
+  };
+}
+
 export const categories = [
   "Decoración",
   "Llaveros",
@@ -96,7 +132,7 @@ export const products: Product[] = [
     description:
       "Erizo decorativo con acabado detallado, impreso capa a capa con mucho cariño.",
     material: "PLA (bioplástico)",
-    stock: { mode: "stock", quantity: 8 },
+    stock: { mode: "stock", quantity: 4 },
     personalization: [
       {
         id: "color",

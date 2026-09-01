@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useCart } from "@/lib/cart";
+import FreeShippingProgress from "@/components/FreeShippingProgress";
 
 export default function CartPage() {
     const items = useCart((state) => state.items);
@@ -105,9 +106,11 @@ export default function CartPage() {
                                 Total
                             </h2>
 
-                            <p className="text-4xl text-violet-500 font-bold mt-3">
+                            <p className="text-4xl text-violet-500 font-bold mt-3 mb-6">
                                 {total.toFixed(2)} €
                             </p>
+
+                            <FreeShippingProgress total={total} />
 
                             <Link
                                 href="/checkout"

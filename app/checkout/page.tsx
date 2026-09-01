@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useCart } from "@/lib/cart";
+import FreeShippingProgress from "@/components/FreeShippingProgress";
 
 export default function CheckoutPage() {
     const items = useCart((state) => state.items);
@@ -163,10 +164,12 @@ export default function CheckoutPage() {
 
                     <hr className="my-6" />
 
-                    <div className="flex justify-between text-2xl font-bold">
+                    <div className="flex justify-between text-2xl font-bold mb-6">
                         <span>Total</span>
                         <span>{total.toFixed(2)} €</span>
                     </div>
+
+                    <FreeShippingProgress total={total} />
 
                     {error && (
                         <p className="mt-4 text-red-500 text-sm">{error}</p>

@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useCart } from "@/lib/cart";
-import type { Product } from "@/lib/products";
+import { getStockInfo, type Product } from "@/lib/products";
 
 export default function ProductCard({ product }: { product: Product }) {
   const addToCart = useCart((state) => state.addToCart);
@@ -11,9 +11,17 @@ export default function ProductCard({ product }: { product: Product }) {
     (option) => option.required
   );
 
+  const stockInfo = getStockInfo(product);
+
   return (
     <Link href={`/product/${product.id}`}>
-      <div className="bg-white rounded-3xl shadow-md overflow-hidden hover:shadow-xl transition-all duration-300 hover:-translate-y-2 cursor-pointer">
+      <div className="bg-white rounded-3xl shadow-md overflow-hidden hover:shadow-xl transition-all duration-300 hover:-translate-y-2 cursor-pointer relative">
+        {stockInfo.low && (
+          <span className="absolute top-3 left-3 bg-red-500 text-white text-xs font-semibold px-3 py-1 rounded-full z-10">
+            {stockInfo.label}
+          </span>
+        )}
+
         <img
           src={product.image}
           alt={product.name}

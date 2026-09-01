@@ -7,10 +7,13 @@ import { useCart } from "@/lib/cart";
 import {
     computeUnitPrice,
     getSelectionsLabel,
+    getStockInfo,
+    products,
     validateSelections,
     type Product,
     type SelectedPersonalization,
 } from "@/lib/products";
+import ProductCard from "@/components/ProductCard";
 
 const COLOR_SWATCHES: Record<string, string> = {
     blanco: "#FFFFFF",
@@ -35,12 +38,15 @@ export default function ProductDetail({ product }: { product: Product }) {
         [product, selections]
     );
 
-    const stockLabel =
-        product.stock.mode === "stock"
-            ? product.stock.quantity > 0
-                ? `${product.stock.quantity} disponibles`
-                : "Sin stock"
-            : `Fabricación bajo pedido · ${product.stock.productionDays} días aprox.`;
+    const stockInfo = getStockInfo(product);
+
+    const relatedProducts = useMemo(
+        () =>
+            products
+                .filter((p) => p.category === product.category && p.id !== product.id)
+                .slice(0, 4),
+        [product]
+    );
 
     const setOption = (optionId: string, value: string) => {
         setSelections((prev) => ({ ...prev, [optionId]: value }));
@@ -122,7 +128,9 @@ export default function ProductDetail({ product }: { product: Product }) {
 
                     <div className="mt-4 flex flex-wrap gap-x-6 gap-y-1 text-sm text-gray-500">
                         <span>Material: {product.material}</span>
-                        <span>{stockLabel}</span>
+                        <span className={stockInfo.low ? "text-red-500 font-semibold" : ""}>
+                            {stockInfo.label}
+                        </span>
                     </div>
 
                     {product.personalization && product.personalization.length > 0 && (
@@ -257,6 +265,20 @@ export default function ProductDetail({ product }: { product: Product }) {
                     </div>
                 </div>
             </div>
+
+            {relatedProducts.length > 0 && (
+                <div className="mt-24">
+                    <h2 className="text-3xl font-bold text-center mb-12">
+                        También te puede interesar
+                    </h2>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                        {relatedProducts.map((related) => (
+                            <ProductCard key={related.id} product={related} />
+                        ))}
+                    </div>
+                </div>
+            )}
         </main>
     );
 }
