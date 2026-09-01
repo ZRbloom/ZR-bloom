@@ -1,14 +1,48 @@
 "use client";
 
+import { useState } from "react";
 import { useCart } from "@/lib/cart";
 
 export default function CheckoutPage() {
     const items = useCart((state) => state.items);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState<string | null>(null);
 
     const total = items.reduce(
         (sum, item) => sum + item.price * item.quantity,
         0
     );
+
+    const handlePay = async () => {
+        setError(null);
+        setLoading(true);
+
+        try {
+            const res = await fetch("/api/checkout", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    items: items.map((item) => ({
+                        id: item.id,
+                        quantity: item.quantity,
+                    })),
+                }),
+            });
+
+            const data = await res.json();
+
+            if (!res.ok || !data.url) {
+                throw new Error(data.error ?? "No se pudo iniciar el pago.");
+            }
+
+            window.location.href = data.url;
+        } catch (err) {
+            setError(
+                err instanceof Error ? err.message : "No se pudo iniciar el pago."
+            );
+            setLoading(false);
+        }
+    };
 
     return (
         <main className="max-w-7xl mx-auto px-6 py-16">
@@ -127,10 +161,16 @@ export default function CheckoutPage() {
                         <span>{total.toFixed(2)} €</span>
                     </div>
 
+                    {error && (
+                        <p className="mt-4 text-red-500 text-sm">{error}</p>
+                    )}
+
                     <button
-                        className="mt-8 w-full bg-[#A7A6FF] hover:bg-[#8f8eff] text-white py-4 rounded-full text-lg font-semibold transition"
+                        onClick={handlePay}
+                        disabled={loading || items.length === 0}
+                        className="mt-8 w-full bg-[#A7A6FF] hover:bg-[#8f8eff] disabled:opacity-50 disabled:cursor-not-allowed text-white py-4 rounded-full text-lg font-semibold transition"
                     >
-                        Pagar ahora
+                        {loading ? "Redirigiendo a Stripe..." : "Pagar ahora"}
                     </button>
 
                 </div>

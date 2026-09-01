@@ -3,7 +3,7 @@ export const products = [
   {
     id: 1,
     name: "Ovejita",
-    price: 14.95,
+    price: 10.,
     image: "/products/ovejita.png",
     category: "Decoración",
     featured: true,

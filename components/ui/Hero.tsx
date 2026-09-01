@@ -39,7 +39,7 @@ export default function Hero() {
           <div className="flex justify-center">
             <div className="bg-white rounded-[40px] shadow-2xl p-6">
               <Image
-                src="/hero/hero.png"
+                src="/hero/hero.jpeg"
                 alt="Producto destacado"
                 width={600}
                 height={600}
