@@ -2,16 +2,14 @@
 
 import Link from "next/link";
 import { useCart } from "@/lib/cart";
-
-type Product = {
-  id: number;
-  name: string;
-  price: number;
-  image: string;
-};
+import type { Product } from "@/lib/products";
 
 export default function ProductCard({ product }: { product: Product }) {
   const addToCart = useCart((state) => state.addToCart);
+
+  const needsPersonalization = product.personalization?.some(
+    (option) => option.required
+  );
 
   return (
     <Link href={`/product/${product.id}`}>
@@ -31,16 +29,27 @@ export default function ProductCard({ product }: { product: Product }) {
             {product.price.toFixed(2)} €
           </p>
 
-          <button
-            onClick={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              addToCart(product);
-            }}
-            className="mt-5 w-full bg-[#A7A6FF] hover:bg-[#9795f7] text-white py-3 rounded-full transition"
-          >
-            Añadir al carrito
-          </button>
+          {needsPersonalization ? (
+            <span className="mt-5 block w-full text-center bg-[#F4F1FF] text-[#8f8eff] py-3 rounded-full font-semibold">
+              Personalizar
+            </span>
+          ) : (
+            <button
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                addToCart({
+                  id: product.id,
+                  name: product.name,
+                  image: product.image,
+                  price: product.price,
+                });
+              }}
+              className="mt-5 w-full bg-[#A7A6FF] hover:bg-[#9795f7] text-white py-3 rounded-full transition"
+            >
+              Añadir al carrito
+            </button>
+          )}
         </div>
       </div>
     </Link>

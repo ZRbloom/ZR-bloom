@@ -12,7 +12,7 @@ export default function CartPage() {
     const clearCart = useCart((state) => state.clearCart);
 
     const total = items.reduce(
-        (sum, item) => sum + item.price * item.quantity,
+        (sum, item) => sum + item.unitPrice * item.quantity,
         0
     );
 
@@ -31,7 +31,7 @@ export default function CartPage() {
                     <div className="space-y-6">
                         {items.map((item) => (
                             <div
-                                key={item.id}
+                                key={item.lineId}
                                 className="bg-white rounded-3xl shadow-lg p-6 flex justify-between items-center"
                             >
                                 <div className="flex items-center gap-6">
@@ -46,13 +46,19 @@ export default function CartPage() {
                                             {item.name}
                                         </h2>
 
+                                        {item.selectionsLabel && (
+                                            <p className="text-gray-500 text-sm mt-1">
+                                                {item.selectionsLabel}
+                                            </p>
+                                        )}
+
                                         <p className="text-violet-500 font-semibold mt-2">
-                                            {item.price.toFixed(2)} €
+                                            {item.unitPrice.toFixed(2)} €
                                         </p>
 
                                         <div className="flex items-center gap-3 mt-4">
                                             <button
-                                                onClick={() => decreaseQuantity(item.id)}
+                                                onClick={() => decreaseQuantity(item.lineId)}
                                                 className="w-10 h-10 rounded-full bg-gray-200 hover:bg-gray-300 text-xl"
                                             >
                                                 −
@@ -63,14 +69,14 @@ export default function CartPage() {
                                             </span>
 
                                             <button
-                                                onClick={() => increaseQuantity(item.id)}
+                                                onClick={() => increaseQuantity(item.lineId)}
                                                 className="w-10 h-10 rounded-full bg-[#A7A6FF] hover:bg-[#8f8eff] text-white text-xl"
                                             >
                                                 +
                                             </button>
 
                                             <button
-                                                onClick={() => removeFromCart(item.id)}
+                                                onClick={() => removeFromCart(item.lineId)}
                                                 className="ml-4 px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-xl"
                                             >
                                                 Eliminar
@@ -80,7 +86,7 @@ export default function CartPage() {
                                 </div>
 
                                 <p className="text-3xl font-bold">
-                                    {(item.price * item.quantity).toFixed(2)} €
+                                    {(item.unitPrice * item.quantity).toFixed(2)} €
                                 </p>
                             </div>
                         ))}

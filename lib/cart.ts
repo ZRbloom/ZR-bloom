@@ -1,49 +1,77 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
+import type { SelectedPersonalization } from "@/lib/products";
 
-type Product = {
+type AddToCartInput = {
     id: number;
     name: string;
-    price: number;
     image: string;
+    price: number;
+    unitPrice?: number;
+    quantity?: number;
+    selections?: SelectedPersonalization;
+    selectionsLabel?: string;
 };
 
-type CartItem = Product & {
+export type CartItem = {
+    lineId: string;
+    id: number;
+    name: string;
+    image: string;
+    price: number;
+    unitPrice: number;
     quantity: number;
+    selections?: SelectedPersonalization;
+    selectionsLabel?: string;
 };
 
 type CartStore = {
     items: CartItem[];
 
-    addToCart: (product: Product) => void;
+    addToCart: (input: AddToCartInput) => void;
 
-    increaseQuantity: (id: number) => void;
+    increaseQuantity: (lineId: string) => void;
 
-    decreaseQuantity: (id: number) => void;
+    decreaseQuantity: (lineId: string) => void;
 
-    removeFromCart: (id: number) => void;
+    removeFromCart: (lineId: string) => void;
 
     clearCart: () => void;
 };
+
+function buildLineId(id: number, selections?: SelectedPersonalization) {
+    if (!selections || Object.keys(selections).length === 0) {
+        return `${id}`;
+    }
+
+    const sorted = Object.keys(selections)
+        .sort()
+        .map((key) => `${key}:${selections[key]}`)
+        .join("|");
+
+    return `${id}::${sorted}`;
+}
 
 export const useCart = create<CartStore>()(
     persist(
         (set) => ({
             items: [],
 
-            addToCart: (product) =>
+            addToCart: (input) =>
                 set((state) => {
+                    const lineId = buildLineId(input.id, input.selections);
+                    const addQuantity = input.quantity ?? 1;
                     const existing = state.items.find(
-                        (item) => item.id === product.id
+                        (item) => item.lineId === lineId
                     );
 
                     if (existing) {
                         return {
                             items: state.items.map((item) =>
-                                item.id === product.id
+                                item.lineId === lineId
                                     ? {
                                           ...item,
-                                          quantity: item.quantity + 1,
+                                          quantity: item.quantity + addQuantity,
                                       }
                                     : item
                             ),
@@ -54,17 +82,24 @@ export const useCart = create<CartStore>()(
                         items: [
                             ...state.items,
                             {
-                                ...product,
-                                quantity: 1,
+                                lineId,
+                                id: input.id,
+                                name: input.name,
+                                image: input.image,
+                                price: input.price,
+                                unitPrice: input.unitPrice ?? input.price,
+                                quantity: addQuantity,
+                                selections: input.selections,
+                                selectionsLabel: input.selectionsLabel,
                             },
                         ],
                     };
                 }),
 
-            increaseQuantity: (id) =>
+            increaseQuantity: (lineId) =>
                 set((state) => ({
                     items: state.items.map((item) =>
-                        item.id === id
+                        item.lineId === lineId
                             ? {
                                   ...item,
                                   quantity: item.quantity + 1,
@@ -73,11 +108,11 @@ export const useCart = create<CartStore>()(
                     ),
                 })),
 
-            decreaseQuantity: (id) =>
+            decreaseQuantity: (lineId) =>
                 set((state) => ({
                     items: state.items
                         .map((item) =>
-                            item.id === id
+                            item.lineId === lineId
                                 ? {
                                       ...item,
                                       quantity: item.quantity - 1,
@@ -87,10 +122,10 @@ export const useCart = create<CartStore>()(
                         .filter((item) => item.quantity > 0),
                 })),
 
-            removeFromCart: (id) =>
+            removeFromCart: (lineId) =>
                 set((state) => ({
                     items: state.items.filter(
-                        (item) => item.id !== id
+                        (item) => item.lineId !== lineId
                     ),
                 })),
 
@@ -101,6 +136,13 @@ export const useCart = create<CartStore>()(
         }),
         {
             name: "zr-bloom-cart",
+            version: 1,
+            migrate: (persistedState, version) => {
+                if (version < 1) {
+                    return { items: [] };
+                }
+                return persistedState as CartStore;
+            },
         }
     )
 );

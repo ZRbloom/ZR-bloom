@@ -9,7 +9,7 @@ export default function CheckoutPage() {
     const [error, setError] = useState<string | null>(null);
 
     const total = items.reduce(
-        (sum, item) => sum + item.price * item.quantity,
+        (sum, item) => sum + item.unitPrice * item.quantity,
         0
     );
 
@@ -25,6 +25,7 @@ export default function CheckoutPage() {
                     items: items.map((item) => ({
                         id: item.id,
                         quantity: item.quantity,
+                        selections: item.selections,
                     })),
                 }),
             });
@@ -114,7 +115,7 @@ export default function CheckoutPage() {
                         {items.map((item) => (
 
                             <div
-                                key={item.id}
+                                key={item.lineId}
                                 className="flex items-center justify-between border-b pb-4"
                             >
 
@@ -132,12 +133,18 @@ export default function CheckoutPage() {
                                             {item.name}
                                         </h3>
 
+                                        {item.selectionsLabel && (
+                                            <p className="text-gray-500 text-xs">
+                                                {item.selectionsLabel}
+                                            </p>
+                                        )}
+
                                         <p className="text-gray-500 text-sm">
                                             Cantidad: {item.quantity}
                                         </p>
 
                                         <p className="text-violet-500 text-sm">
-                                            {item.price.toFixed(2)} € / unidad
+                                            {item.unitPrice.toFixed(2)} € / unidad
                                         </p>
 
                                     </div>
@@ -145,7 +152,7 @@ export default function CheckoutPage() {
                                 </div>
 
                                 <p className="text-lg font-bold">
-                                    {(item.price * item.quantity).toFixed(2)} €
+                                    {(item.unitPrice * item.quantity).toFixed(2)} €
                                 </p>
 
                             </div>
