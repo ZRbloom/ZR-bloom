@@ -41,6 +41,10 @@ export async function POST(request: NextRequest) {
                 throw new Error(validationError);
             }
 
+            if (!Number.isFinite(item.quantity)) {
+                throw new Error(`Cantidad no válida para ${product.name}.`);
+            }
+
             const quantity = Math.max(1, Math.floor(item.quantity));
             const unitPrice = computeUnitPrice(product, item.selections);
             const selectionsLabel = getSelectionsLabel(product, item.selections);
@@ -70,20 +74,27 @@ export async function POST(request: NextRequest) {
         );
     }
 
-    const session = await stripe.checkout.sessions.create({
-        mode: "payment",
-        payment_method_types: ["card", "bizum"],
-        allow_promotion_codes: true,
-        shipping_address_collection: {
-            allowed_countries: ["ES"],
-        },
-        phone_number_collection: {
-            enabled: true,
-        },
-        line_items,
-        success_url: `${origin}/checkout/success`,
-        cancel_url: `${origin}/checkout/cancel`,
-    });
+    try {
+        const session = await stripe.checkout.sessions.create({
+            mode: "payment",
+            payment_method_types: ["card", "bizum"],
+            allow_promotion_codes: true,
+            shipping_address_collection: {
+                allowed_countries: ["ES"],
+            },
+            phone_number_collection: {
+                enabled: true,
+            },
+            line_items,
+            success_url: `${origin}/checkout/success`,
+            cancel_url: `${origin}/checkout/cancel`,
+        });
 
-    return NextResponse.json({ url: session.url });
+        return NextResponse.json({ url: session.url });
+    } catch {
+        return NextResponse.json(
+            { error: "No se pudo iniciar el pago con Stripe." },
+            { status: 502 }
+        );
+    }
 }
