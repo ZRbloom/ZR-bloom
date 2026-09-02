@@ -58,6 +58,10 @@ export async function POST(request: NextRequest) {
                         name: product.name,
                         description: selectionsLabel,
                         images: [`${origin}${product.image}`],
+                        metadata: {
+                            product_id: String(product.id),
+                            selections: JSON.stringify(item.selections ?? {}),
+                        },
                     },
                 },
             };
