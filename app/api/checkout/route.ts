@@ -74,6 +74,12 @@ export async function POST(request: NextRequest) {
         mode: "payment",
         payment_method_types: ["card", "bizum"],
         allow_promotion_codes: true,
+        shipping_address_collection: {
+            allowed_countries: ["ES"],
+        },
+        phone_number_collection: {
+            enabled: true,
+        },
         line_items,
         success_url: `${origin}/checkout/success`,
         cancel_url: `${origin}/checkout/cancel`,

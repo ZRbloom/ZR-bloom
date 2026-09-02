@@ -65,45 +65,15 @@ export default function CheckoutPage() {
                         Datos de envío
                     </h2>
 
-                    <div className="space-y-5">
+                    <p className="text-gray-600">
+                        Te pediremos tu email, teléfono y dirección de envío de
+                        forma segura en el siguiente paso, gestionado por
+                        Stripe.
+                    </p>
 
-                        <input
-                            type="text"
-                            placeholder="Nombre completo"
-                            className="w-full border rounded-xl p-4"
-                        />
-
-                        <input
-                            type="email"
-                            placeholder="Correo electrónico"
-                            className="w-full border rounded-xl p-4"
-                        />
-
-                        <input
-                            type="tel"
-                            placeholder="Teléfono"
-                            className="w-full border rounded-xl p-4"
-                        />
-
-                        <input
-                            type="text"
-                            placeholder="Dirección"
-                            className="w-full border rounded-xl p-4"
-                        />
-
-                        <input
-                            type="text"
-                            placeholder="Código postal"
-                            className="w-full border rounded-xl p-4"
-                        />
-
-                        <input
-                            type="text"
-                            placeholder="Ciudad"
-                            className="w-full border rounded-xl p-4"
-                        />
-
-                    </div>
+                    <p className="text-gray-500 text-sm mt-4">
+                        Por ahora solo enviamos a España 🇪🇸.
+                    </p>
 
                 </div>
 
