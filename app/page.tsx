@@ -1,5 +1,5 @@
-import Header from "@/components/ui/Header";
 import Hero from "@/components/ui/Hero";
+import About from "@/components/ui/About";
 import ProductCard from "@/components/ProductCard";
 import { products } from "@/lib/products";
 
@@ -19,8 +19,8 @@ export default async function Home({
 
   return (
     <>
-      <Header />
       <Hero />
+      <About />
 
       <main className="bg-[#FCFAFF]">
         <section id="catalogo" className="max-w-7xl mx-auto px-6 py-24 scroll-mt-24">
