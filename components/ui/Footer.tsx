@@ -46,15 +46,20 @@ export default function Footer() {
                     <ul className="space-y-2 text-white/70 text-sm">
                         <li>
                             <a
-                                href="mailto:hola@zrbloom.es"
+                                href="mailto:97zairaruiz@gmail.com"
                                 className="hover:text-white transition"
                             >
-                                hola@zrbloom.es
+                                97zairaruiz@gmail.com
                             </a>
                         </li>
                         <li>
-                            <a href="#" className="hover:text-white transition">
-                                Instagram @zrbloom
+                            <a
+                                href="https://www.instagram.com/zr_bloom/"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="hover:text-white transition"
+                            >
+                                Instagram @zr_bloom
                             </a>
                         </li>
                     </ul>
