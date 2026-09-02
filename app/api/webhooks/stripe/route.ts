@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import type Stripe from "stripe";
 import { stripe } from "@/lib/stripe";
 import { supabaseAdmin } from "@/lib/supabase";
+import { sendOrderConfirmationEmail } from "@/lib/email";
 
 export async function POST(request: NextRequest) {
     const body = await request.text();
@@ -62,6 +63,14 @@ export async function POST(request: NextRequest) {
 
     const shippingDetails = session.collected_information?.shipping_details;
 
+    const { data: existingOrder } = await supabaseAdmin
+        .from("orders")
+        .select("id")
+        .eq("stripe_session_id", session.id)
+        .maybeSingle();
+
+    const isNewOrder = !existingOrder;
+
     const { data: order, error: orderError } = await supabaseAdmin
         .from("orders")
         .upsert(
@@ -104,47 +113,67 @@ export async function POST(request: NextRequest) {
     // que un reintento no duplique los productos.
     await supabaseAdmin.from("order_items").delete().eq("order_id", order.id);
 
-    if (lineItems.length > 0) {
-        const items = lineItems.map((item) => {
-            const product =
-                item.price?.product && typeof item.price.product !== "string"
-                    ? item.price.product
-                    : null;
+    const items = lineItems.map((item) => {
+        const product =
+            item.price?.product && typeof item.price.product !== "string"
+                ? item.price.product
+                : null;
 
-            const metadata =
-                product && !("deleted" in product) ? product.metadata : {};
+        const metadata =
+            product && !("deleted" in product) ? product.metadata : {};
 
-            let selections: Record<string, string> = {};
-            try {
-                selections = metadata?.selections
-                    ? JSON.parse(metadata.selections)
-                    : {};
-            } catch {
-                selections = {};
-            }
+        let selections: Record<string, string> = {};
+        try {
+            selections = metadata?.selections
+                ? JSON.parse(metadata.selections)
+                : {};
+        } catch {
+            selections = {};
+        }
 
-            return {
-                order_id: order.id,
-                product_id: metadata?.product_id
-                    ? Number(metadata.product_id)
-                    : null,
-                product_name:
-                    product && !("deleted" in product)
-                        ? product.name
-                        : (item.description ?? "Producto"),
-                unit_price: (item.price?.unit_amount ?? 0) / 100,
-                quantity: item.quantity ?? 1,
-                selections,
-                selections_label: item.description,
-            };
-        });
+        return {
+            order_id: order.id,
+            product_id: metadata?.product_id ? Number(metadata.product_id) : null,
+            product_name:
+                product && !("deleted" in product)
+                    ? product.name
+                    : (item.description ?? "Producto"),
+            unit_price: (item.price?.unit_amount ?? 0) / 100,
+            quantity: item.quantity ?? 1,
+            selections,
+            selections_label: item.description,
+        };
+    });
 
+    if (items.length > 0) {
         const { error: itemsError } = await supabaseAdmin
             .from("order_items")
             .insert(items);
 
         if (itemsError) {
             console.error("Error guardando productos del pedido:", itemsError);
+        }
+    }
+
+    if (isNewOrder) {
+        try {
+            await sendOrderConfirmationEmail({
+                to: email,
+                orderId: order.id,
+                items: items.map((item) => ({
+                    productName: item.product_name,
+                    quantity: item.quantity,
+                    unitPrice: item.unit_price,
+                    selectionsLabel: item.selections_label,
+                })),
+                total: order.total,
+                currency: order.currency,
+                shippingAddress: shippingDetails
+                    ? { name: shippingDetails.name, ...shippingDetails.address }
+                    : null,
+            });
+        } catch (err) {
+            console.error("Error enviando email de confirmación:", err);
         }
     }
 
