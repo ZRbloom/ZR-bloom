@@ -270,18 +270,6 @@ export const products: Product[] = [
     stock: { mode: "made_to_order", productionDays: 3 },
   },
   {
-    id: 8,
-    name: "Figura fantasma",
-    price: 11.0,
-    image: "/products/figurafantasma.jpeg",
-    category: "Decoración",
-    featured: true,
-    description:
-      "Figura decorativa de fantasma con lazo, ideal para estanterías o como detalle de regalo.",
-    material: "PLA (bioplástico)",
-    stock: { mode: "made_to_order", productionDays: 3 },
-  },
-  {
     id: 9,
     name: "Kuromi",
     price: 16.0,
@@ -506,18 +494,6 @@ export const products: Product[] = [
     featured: true,
     description:
       "Soporte translúcido para exhibir tu carta coleccionable favorita (la carta no está incluida).",
-    material: "PLA (bioplástico)",
-    stock: { mode: "made_to_order", productionDays: 2 },
-  },
-  {
-    id: 28,
-    name: "Funda para pajita",
-    price: 10.0,
-    image: "/products/funda-pajita.jpeg",
-    category: "Llaveros",
-    featured: true,
-    description:
-      "Funda decorativa para pajita reutilizable, con forma de vaso térmico y enganche de llavero.",
     material: "PLA (bioplástico)",
     stock: { mode: "made_to_order", productionDays: 2 },
   },
