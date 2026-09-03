@@ -30,6 +30,7 @@ export type Product = {
   name: string;
   price: number;
   image: string;
+  gallery?: string[];
   category: string;
   featured?: boolean;
   description: string;
@@ -253,6 +254,7 @@ export const products: Product[] = [
     name: "Llavero fantasma",
     price: 10.0,
     image: "/products/llaverofantasma.jpeg",
+    gallery: ["/products/llaverofantasma-2.jpeg"],
     category: "Llaveros",
     featured: true,
     description:
@@ -277,6 +279,7 @@ export const products: Product[] = [
     name: "Kuromi",
     price: 16.0,
     image: "/products/kuromi.jpeg",
+    gallery: ["/products/kuromi-2.jpeg"],
     category: "Decoración",
     featured: true,
     description: "Figura decorativa de Kuromi, disponible en dos colores.",
@@ -323,6 +326,7 @@ export const products: Product[] = [
     name: "Pikachu Mega Charizard X",
     price: 19.0,
     image: "/products/pikachumegax.jpeg",
+    gallery: ["/products/pikachumegax-2.jpeg"],
     category: "Decoración",
     featured: true,
     description:
@@ -358,6 +362,7 @@ export const products: Product[] = [
     name: "Pikachu Rayquaza",
     price: 18.0,
     image: "/products/pikacharayquaza.jpeg",
+    gallery: ["/products/pikacharayquaza-2.jpeg"],
     category: "Decoración",
     featured: true,
     description: "Figura decorativa de Pikachu disfrazado de Rayquaza.",
@@ -369,6 +374,7 @@ export const products: Product[] = [
     name: "Pikachu Gengar",
     price: 16.0,
     image: "/products/pikachugengar.jpeg",
+    gallery: ["/products/pikachugengar-2.jpeg", "/products/pikachugengar-3.jpeg"],
     category: "Decoración",
     featured: true,
     description: "Figura decorativa de Pikachu disfrazado de Gengar.",

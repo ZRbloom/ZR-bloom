@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useCart } from "@/lib/cart";
@@ -42,6 +42,16 @@ export default function ProductDetail({ product }: { product: Product }) {
     const [quantity, setQuantity] = useState(1);
     const [error, setError] = useState<string | null>(null);
     const [added, setAdded] = useState(false);
+    const [activeImage, setActiveImage] = useState(0);
+
+    const images = useMemo(
+        () => [product.image, ...(product.gallery ?? [])],
+        [product]
+    );
+
+    useEffect(() => {
+        setActiveImage(0);
+    }, [product.id]);
 
     const unitPrice = useMemo(
         () => computeUnitPrice(product, selections),
@@ -124,13 +134,69 @@ export default function ProductDetail({ product }: { product: Product }) {
                         {isFavorite ? "❤️" : "🤍"}
                     </button>
 
-                    <Image
-                        src={product.image}
-                        alt={product.name}
-                        width={800}
-                        height={800}
-                        className="rounded-2xl w-full"
-                    />
+                    <div className="relative">
+                        <Image
+                            src={images[activeImage]}
+                            alt={product.name}
+                            width={800}
+                            height={800}
+                            className="rounded-2xl w-full"
+                        />
+
+                        {images.length > 1 && (
+                            <>
+                                <button
+                                    type="button"
+                                    onClick={() =>
+                                        setActiveImage(
+                                            (i) => (i - 1 + images.length) % images.length
+                                        )
+                                    }
+                                    aria-label="Foto anterior"
+                                    className="absolute left-2 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/90 shadow flex items-center justify-center text-xl hover:scale-110 transition"
+                                >
+                                    ‹
+                                </button>
+
+                                <button
+                                    type="button"
+                                    onClick={() =>
+                                        setActiveImage((i) => (i + 1) % images.length)
+                                    }
+                                    aria-label="Foto siguiente"
+                                    className="absolute right-2 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/90 shadow flex items-center justify-center text-xl hover:scale-110 transition"
+                                >
+                                    ›
+                                </button>
+                            </>
+                        )}
+                    </div>
+
+                    {images.length > 1 && (
+                        <div className="flex gap-3 mt-4 justify-center">
+                            {images.map((src, index) => (
+                                <button
+                                    key={src}
+                                    type="button"
+                                    onClick={() => setActiveImage(index)}
+                                    aria-label={`Ver foto ${index + 1}`}
+                                    className={`w-16 h-16 rounded-xl overflow-hidden border-2 transition ${
+                                        index === activeImage
+                                            ? "border-[#A7A6FF]"
+                                            : "border-transparent opacity-70 hover:opacity-100"
+                                    }`}
+                                >
+                                    <Image
+                                        src={src}
+                                        alt={`${product.name} foto ${index + 1}`}
+                                        width={100}
+                                        height={100}
+                                        className="w-full h-full object-cover"
+                                    />
+                                </button>
+                            ))}
+                        </div>
+                    )}
                 </div>
 
                 <div>
