@@ -15,6 +15,7 @@ import {
     type SelectedPersonalization,
 } from "@/lib/products";
 import ProductCard from "@/components/ProductCard";
+import VoodooDollPreview from "@/components/VoodooDollPreview";
 
 const COLOR_SWATCHES: Record<string, string> = {
     blanco: "#FFFFFF",
@@ -249,28 +250,36 @@ export default function ProductDetail({ product }: { product: Product }) {
                                             className="w-full border rounded-xl p-3"
                                         />
                                     ) : option.type === "color" ? (
-                                        <div className="flex flex-wrap gap-3">
-                                            {option.choices.map((choice) => (
-                                                <button
-                                                    key={choice.value}
-                                                    type="button"
-                                                    title={choice.label}
-                                                    onClick={() =>
-                                                        setOption(option.id, choice.value)
-                                                    }
-                                                    className={`w-10 h-10 rounded-full border-2 transition ${
-                                                        selections[option.id] === choice.value
-                                                            ? "border-[#A7A6FF] scale-110"
-                                                            : "border-gray-200"
-                                                    }`}
-                                                    style={{
-                                                        backgroundColor:
-                                                            COLOR_SWATCHES[choice.value] ??
-                                                            "#EEE",
-                                                    }}
+                                        <>
+                                            {product.id === 6 && (
+                                                <VoodooDollPreview
+                                                    colorValue={selections[option.id]}
                                                 />
-                                            ))}
-                                        </div>
+                                            )}
+
+                                            <div className="flex flex-wrap gap-3">
+                                                {option.choices.map((choice) => (
+                                                    <button
+                                                        key={choice.value}
+                                                        type="button"
+                                                        title={choice.label}
+                                                        onClick={() =>
+                                                            setOption(option.id, choice.value)
+                                                        }
+                                                        className={`w-10 h-10 rounded-full border-2 transition ${
+                                                            selections[option.id] === choice.value
+                                                                ? "border-[#A7A6FF] scale-110"
+                                                                : "border-gray-200"
+                                                        }`}
+                                                        style={{
+                                                            backgroundColor:
+                                                                COLOR_SWATCHES[choice.value] ??
+                                                                "#EEE",
+                                                        }}
+                                                    />
+                                                ))}
+                                            </div>
+                                        </>
                                     ) : (
                                         <div className="flex flex-wrap gap-3">
                                             {option.choices.map((choice) => (
