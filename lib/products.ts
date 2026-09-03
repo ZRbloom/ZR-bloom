@@ -209,9 +209,9 @@ export const products: Product[] = [
     id: 6,
     name: "Muñeco vudú",
     price: 12.0,
-    image: "/products/muneco-vudu-rojo-negro.jpeg",
+    image: "/products/muneco-vudu-blanco-negro.jpeg",
     gallery: [
-      "/products/muneco-vudu-blanco-negro.jpeg",
+      "/products/muneco-vudu-rojo-negro.jpeg",
       "/products/munecovudu.jpeg",
     ],
     category: "Personalizados",
