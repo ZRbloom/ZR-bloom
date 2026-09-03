@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useCart } from "@/lib/cart";
+import { useFavorites } from "@/lib/favorites";
 import {
     computeUnitPrice,
     getSelectionsLabel,
@@ -27,6 +28,8 @@ const COLOR_SWATCHES: Record<string, string> = {
 export default function ProductDetail({ product }: { product: Product }) {
     const router = useRouter();
     const addToCart = useCart((state) => state.addToCart);
+    const isFavorite = useFavorites((state) => state.isFavorite(product.id));
+    const toggleFavorite = useFavorites((state) => state.toggleFavorite);
 
     const [selections, setSelections] = useState<SelectedPersonalization>({});
     const [quantity, setQuantity] = useState(1);
@@ -103,7 +106,17 @@ export default function ProductDetail({ product }: { product: Product }) {
     return (
         <main className="max-w-6xl mx-auto px-6 py-16">
             <div className="grid md:grid-cols-2 gap-12">
-                <div className="bg-white rounded-3xl p-6 shadow-lg h-fit">
+                <div className="bg-white rounded-3xl p-6 shadow-lg h-fit relative">
+                    <button
+                        onClick={() => toggleFavorite(product.id)}
+                        aria-label={
+                            isFavorite ? "Quitar de favoritos" : "Añadir a favoritos"
+                        }
+                        className="absolute top-9 right-9 w-11 h-11 rounded-full bg-white shadow flex items-center justify-center text-2xl z-10 hover:scale-110 transition"
+                    >
+                        {isFavorite ? "❤️" : "🤍"}
+                    </button>
+
                     <Image
                         src={product.image}
                         alt={product.name}

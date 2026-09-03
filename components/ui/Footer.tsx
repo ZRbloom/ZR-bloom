@@ -34,6 +34,11 @@ export default function Footer() {
                             </Link>
                         </li>
                         <li>
+                            <Link href="/favoritos" className="hover:text-white transition">
+                                Favoritos
+                            </Link>
+                        </li>
+                        <li>
                             <Link href="/cart" className="hover:text-white transition">
                                 Carrito
                             </Link>

@@ -4,10 +4,12 @@ import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useCart } from "@/lib/cart";
+import { useFavorites } from "@/lib/favorites";
 import { FREE_SHIPPING_THRESHOLD } from "@/lib/shipping";
 
 export default function Header() {
     const items = useCart((state) => state.items);
+    const favoriteIds = useFavorites((state) => state.ids);
     const router = useRouter();
 
     const [menuOpen, setMenuOpen] = useState(false);
@@ -57,6 +59,16 @@ export default function Header() {
                         🔍
                     </button>
 
+                    <Link href="/favoritos" className="relative">
+                        🤍
+
+                        {favoriteIds.length > 0 && (
+                            <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full px-2">
+                                {favoriteIds.length}
+                            </span>
+                        )}
+                    </Link>
+
                     <Link href="/cart" className="relative">
                         🛒
 
@@ -77,6 +89,9 @@ export default function Header() {
                         </Link>
                         <Link href="/#catalogo" onClick={() => setMenuOpen(false)}>
                             Catálogo
+                        </Link>
+                        <Link href="/favoritos" onClick={() => setMenuOpen(false)}>
+                            Favoritos
                         </Link>
                         <Link href="/cart" onClick={() => setMenuOpen(false)}>
                             Carrito

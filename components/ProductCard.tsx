@@ -2,10 +2,13 @@
 
 import Link from "next/link";
 import { useCart } from "@/lib/cart";
+import { useFavorites } from "@/lib/favorites";
 import { getStockInfo, type Product } from "@/lib/products";
 
 export default function ProductCard({ product }: { product: Product }) {
   const addToCart = useCart((state) => state.addToCart);
+  const isFavorite = useFavorites((state) => state.isFavorite(product.id));
+  const toggleFavorite = useFavorites((state) => state.toggleFavorite);
 
   const needsPersonalization = product.personalization?.some(
     (option) => option.required
@@ -21,6 +24,20 @@ export default function ProductCard({ product }: { product: Product }) {
             {stockInfo.label}
           </span>
         )}
+
+        <button
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            toggleFavorite(product.id);
+          }}
+          aria-label={
+            isFavorite ? "Quitar de favoritos" : "Añadir a favoritos"
+          }
+          className="absolute top-3 right-3 w-9 h-9 rounded-full bg-white/90 shadow flex items-center justify-center text-xl z-10 hover:scale-110 transition"
+        >
+          {isFavorite ? "❤️" : "🤍"}
+        </button>
 
         <img
           src={product.image}
