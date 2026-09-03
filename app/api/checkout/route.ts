@@ -7,6 +7,7 @@ import {
     validateSelections,
     type SelectedPersonalization,
 } from "@/lib/products";
+import { getShippingCost } from "@/lib/shipping";
 
 type CartItemInput = {
     id: number;
@@ -27,6 +28,7 @@ export async function POST(request: NextRequest) {
     const origin = request.headers.get("origin") ?? request.nextUrl.origin;
 
     let line_items;
+    let subtotal = 0;
 
     try {
         line_items = items.map((item) => {
@@ -48,6 +50,8 @@ export async function POST(request: NextRequest) {
             const quantity = Math.max(1, Math.floor(item.quantity));
             const unitPrice = computeUnitPrice(product, item.selections);
             const selectionsLabel = getSelectionsLabel(product, item.selections);
+
+            subtotal += unitPrice * quantity;
 
             return {
                 quantity,
@@ -78,6 +82,8 @@ export async function POST(request: NextRequest) {
         );
     }
 
+    const shippingCost = getShippingCost(subtotal);
+
     try {
         const session = await stripe.checkout.sessions.create({
             mode: "payment",
@@ -89,6 +95,21 @@ export async function POST(request: NextRequest) {
             phone_number_collection: {
                 enabled: true,
             },
+            shipping_options: [
+                {
+                    shipping_rate_data: {
+                        type: "fixed_amount",
+                        fixed_amount: {
+                            amount: Math.round(shippingCost * 100),
+                            currency: "eur",
+                        },
+                        display_name:
+                            shippingCost === 0
+                                ? "Envío gratis"
+                                : "Envío estándar (España)",
+                    },
+                },
+            ],
             line_items,
             success_url: `${origin}/checkout/success`,
             cancel_url: `${origin}/checkout/cancel`,

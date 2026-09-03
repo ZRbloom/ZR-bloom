@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useCart } from "@/lib/cart";
 import FreeShippingProgress from "@/components/FreeShippingProgress";
-import { getFreeShippingProgress } from "@/lib/shipping";
+import { getShippingCost } from "@/lib/shipping";
 
 export default function CartPage() {
     const items = useCart((state) => state.items);
@@ -18,7 +18,8 @@ export default function CartPage() {
         0
     );
 
-    const { qualifies: freeShipping } = getFreeShippingProgress(subtotal);
+    const shippingCost = getShippingCost(subtotal);
+    const total = subtotal + shippingCost;
 
     return (
         <main className="max-w-6xl mx-auto px-6 py-16">
@@ -127,9 +128,9 @@ export default function CartPage() {
                                 <div className="flex justify-between">
                                     <span>Envío</span>
                                     <span>
-                                        {freeShipping
+                                        {shippingCost === 0
                                             ? "Gratis"
-                                            : "Se calcula en el pago"}
+                                            : `${shippingCost.toFixed(2)} €`}
                                     </span>
                                 </div>
                             </div>
@@ -138,7 +139,7 @@ export default function CartPage() {
 
                             <div className="flex justify-between text-2xl font-bold mb-6">
                                 <span>Total</span>
-                                <span>{subtotal.toFixed(2)} €</span>
+                                <span>{total.toFixed(2)} €</span>
                             </div>
 
                             <FreeShippingProgress total={subtotal} />
