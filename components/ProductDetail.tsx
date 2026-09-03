@@ -30,6 +30,9 @@ const COLOR_SWATCHES: Record<string, string> = {
     marron_brilla: "#8B5E3C",
     morado_negro: "#2D2D2D",
     negro_rosa: "#F4A6C9",
+    rojo_negro: "#E24C4C",
+    rojo_azul: "#E24C4C",
+    beige_marron: "#C9A78C",
 };
 
 export default function ProductDetail({ product }: { product: Product }) {
@@ -246,7 +249,7 @@ export default function ProductDetail({ product }: { product: Product }) {
                                             className="w-full border rounded-xl p-3"
                                         />
                                     ) : option.type === "color" ? (
-                                        <div className="flex gap-3">
+                                        <div className="flex flex-wrap gap-3">
                                             {option.choices.map((choice) => (
                                                 <button
                                                     key={choice.value}
