@@ -23,6 +23,13 @@ const COLOR_SWATCHES: Record<string, string> = {
     verde: "#8BC48A",
     marron: "#8B5E3C",
     gris: "#B0AFB6",
+    azul: "#5B8DEF",
+    rojo: "#E24C4C",
+    naranja: "#F2994A",
+    blanco_negro: "#2D2D2D",
+    marron_brilla: "#8B5E3C",
+    morado_negro: "#2D2D2D",
+    negro_rosa: "#F4A6C9",
 };
 
 export default function ProductDetail({ product }: { product: Product }) {
