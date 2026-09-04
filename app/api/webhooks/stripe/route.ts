@@ -6,6 +6,7 @@ import {
     sendOrderConfirmationEmail,
     sendNewOrderNotificationEmail,
 } from "@/lib/email";
+import { sendTelegramOrderNotification } from "@/lib/telegram";
 
 export async function POST(request: NextRequest) {
     const body = await request.text();
@@ -209,6 +210,28 @@ export async function POST(request: NextRequest) {
             });
         } catch (err) {
             console.error("Error enviando notificación de nuevo pedido:", err);
+        }
+
+        try {
+            await sendTelegramOrderNotification({
+                orderId: order.id,
+                items: items.map((item) => ({
+                    productName: item.product_name,
+                    quantity: item.quantity,
+                    unitPrice: item.unit_price,
+                    selectionsLabel: item.selections_label,
+                })),
+                total: order.total,
+                currency: order.currency,
+                customerName: customer.name,
+                customerEmail: customer.email,
+                customerPhone: customer.phone,
+                shippingAddress: shippingDetails
+                    ? { name: shippingDetails.name, ...shippingDetails.address }
+                    : null,
+            });
+        } catch (err) {
+            console.error("Error enviando notificación de Telegram:", err);
         }
     }
 
