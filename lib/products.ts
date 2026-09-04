@@ -213,6 +213,8 @@ export const products: Product[] = [
     gallery: [
       "/products/muneco-vudu-naranja-negro-calabaza.jpeg",
       "/products/muneco-vudu-terracota-crema.jpeg",
+      "/products/muneco-vudu-verde-amarillo.jpeg",
+      "/products/muneco-vudu-naranja-crema.jpeg",
     ],
     category: "Personalizados",
     featured: true,
