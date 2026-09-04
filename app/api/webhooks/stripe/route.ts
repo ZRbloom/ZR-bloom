@@ -2,7 +2,10 @@ import { NextRequest, NextResponse } from "next/server";
 import type Stripe from "stripe";
 import { stripe } from "@/lib/stripe";
 import { supabaseAdmin } from "@/lib/supabase";
-import { sendOrderConfirmationEmail } from "@/lib/email";
+import {
+    sendOrderConfirmationEmail,
+    sendNewOrderNotificationEmail,
+} from "@/lib/email";
 
 export async function POST(request: NextRequest) {
     const body = await request.text();
@@ -184,6 +187,28 @@ export async function POST(request: NextRequest) {
             });
         } catch (err) {
             console.error("Error enviando email de confirmación:", err);
+        }
+
+        try {
+            await sendNewOrderNotificationEmail({
+                orderId: order.id,
+                items: items.map((item) => ({
+                    productName: item.product_name,
+                    quantity: item.quantity,
+                    unitPrice: item.unit_price,
+                    selectionsLabel: item.selections_label,
+                })),
+                total: order.total,
+                currency: order.currency,
+                customerName: customer.name,
+                customerEmail: customer.email,
+                customerPhone: customer.phone,
+                shippingAddress: shippingDetails
+                    ? { name: shippingDetails.name, ...shippingDetails.address }
+                    : null,
+            });
+        } catch (err) {
+            console.error("Error enviando notificación de nuevo pedido:", err);
         }
     }
 
