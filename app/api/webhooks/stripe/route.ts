@@ -40,6 +40,14 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ error: "Sesión sin email." }, { status: 400 });
     }
 
+    const shippingDetails = session.collected_information?.shipping_details;
+
+    const address = shippingDetails?.address
+        ? [shippingDetails.address.line1, shippingDetails.address.line2]
+              .filter(Boolean)
+              .join(", ")
+        : null;
+
     const { data: customer, error: customerError } = await supabaseAdmin
         .from("customers")
         .upsert(
@@ -47,6 +55,10 @@ export async function POST(request: NextRequest) {
                 email,
                 name: session.customer_details?.name ?? null,
                 phone: session.customer_details?.phone ?? null,
+                address,
+                postal_code: shippingDetails?.address?.postal_code ?? null,
+                city: shippingDetails?.address?.city ?? null,
+                updated_at: new Date().toISOString(),
             },
             { onConflict: "email" }
         )
@@ -60,8 +72,6 @@ export async function POST(request: NextRequest) {
             { status: 500 }
         );
     }
-
-    const shippingDetails = session.collected_information?.shipping_details;
 
     const { data: existingOrder } = await supabaseAdmin
         .from("orders")
